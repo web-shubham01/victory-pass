@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password • Victory</title>
+  <meta name="description" content="Secure password recovery and access portal for the Victory platform." />
+  <meta name="theme-color" content="#060906" />
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='28' fill='%23baf437'/%3E%3Cpath d='M30 28 L50 72 L70 28' fill='none' stroke='%23060906' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <!-- Ambient Lighting Effects -->
+  <div class="ambient-scene" aria-hidden="true">
+    <div class="glow-orb glow-orb-primary"></div>
+    <div class="glow-orb glow-orb-secondary"></div>
+    <div class="grid-mesh"></div>
+  </div>
+
+  <main class="app-wrapper">
+    <!-- Brand Header -->
+    <header class="brand-header">
+      <div class="brand-badge" aria-label="Victory Logo">V</div>
+      <h1 class="brand-name">VICTORY <span class="highlight">PASS</span></h1>
+      <p class="brand-tagline">Secure Authentication & Password Recovery</p>
+    </header>
+
+    <!-- Main Auth Container -->
+    <div class="auth-card" id="authCard">
+
+      <!-- Live Session Status Pill -->
+      <div class="session-status-badge" id="sessionBadge">
+        <span class="status-dot"></span>
+        <span id="sessionStatusText">Checking recovery link status...</span>
+      </div>
+
+      <!-- Dynamic Alert Box -->
+      <div id="alertBox" class="banner-alert" style="display: none;" role="alert">
+        <svg class="alert-icon" id="alertIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="alertMessage"></span>
+      </div>
+
+      <!-- PANEL 1: Set New Password Form -->
+      <section id="panelReset" class="tab-panel">
+        <h2 class="view-title">Set New Password</h2>
+        <p class="view-desc">Create a strong, updated password to restore access to your Victory account.</p>
+
+        <form id="formResetPassword" novalidate>
+          <!-- Password Field -->
+          <div class="form-group">
+            <label class="form-label" for="inputPassword">
+              <span>New Password</span>
+              <span class="form-label-right" id="strengthText">Min 8 chars</span>
+            </label>
+            <div class="input-container">
+              <svg class="input-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input 
+                type="password" 
+                id="inputPassword" 
+                class="input-field" 
+                placeholder="Enter new password" 
+                required 
+                autocomplete="new-password" 
+              />
+              <button type="button" class="btn-toggle-eye" id="togglePassBtn" aria-label="Toggle password visibility">
+                <svg id="eyeIconOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg id="eyeIconClosed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Dynamic Password Strength Meter -->
+            <div class="strength-container" id="strengthContainer">
+              <div class="strength-header">
+                <span>Strength Score:</span>
+                <span class="strength-label-value" id="strengthScoreLabel">None</span>
+              </div>
+              <div class="strength-track" id="strengthTrack">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="form-group">
+            <label class="form-label" for="inputConfirmPassword">
+              <span>Confirm Password</span>
+              <span class="form-label-right" id="matchIndicator"></span>
+            </label>
+            <div class="input-container">
+              <svg class="input-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <input 
+                type="password" 
+                id="inputConfirmPassword" 
+                class="input-field" 
+                placeholder="Re-enter password" 
+                required 
+                autocomplete="new-password" 
+              />
+              <button type="button" class="btn-toggle-eye" id="toggleConfirmPassBtn" aria-label="Toggle confirm password visibility">
+                <svg id="eyeIconConfirmOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg id="eyeIconConfirmClosed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Requirements Checklist -->
+          <div class="requirements-card">
+            <div class="requirements-title">Security Checklist</div>
+            <div class="requirement-item" id="reqLength">
+              <span class="req-icon"></span>
+              <span>At least 8 characters long</span>
+            </div>
+            <div class="requirement-item" id="reqUppercase">
+              <span class="req-icon"></span>
+              <span>Contains uppercase & lowercase letters</span>
+            </div>
+            <div class="requirement-item" id="reqNumber">
+              <span class="req-icon"></span>
+              <span>Contains at least 1 number or symbol</span>
+            </div>
+            <div class="requirement-item" id="reqMatch">
+              <span class="req-icon"></span>
+              <span>Passwords match exactly</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="submitResetBtn" class="btn-primary">
+            <span class="btn-spinner"></span>
+            <span class="btn-text">Update Password</span>
+          </button>
+        </form>
+      </section>
+
+
+      <!-- PANEL 3: Success Celebration Panel -->
+      <section id="panelSuccess" class="success-panel">
+        <div class="success-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="success-title">Password Updated!</h2>
+        <p class="success-desc">Your credentials have been securely updated in Supabase Auth. You're ready to jump back into Victory.</p>
+
+        <div class="countdown-box">
+          <div class="countdown-ring" id="countdownRing" style="--progress: 1;">
+            <span class="countdown-number" id="countdownTimer">3</span>
+          </div>
+          <div class="countdown-text">
+            Redirecting to Victory app in <strong id="countdownSeconds">3 seconds</strong>...
+          </div>
+        </div>
+
+        <a href="#" id="manualRedirectBtn" class="btn-primary" style="text-decoration: none;">
+          <span class="btn-text">Launch Victory App Now</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </section>
+
+      <!-- Footer Navigation Links -->
+      <footer class="card-footer-links">
+        <a href="#" id="footerAppLink" class="app-return-link">
+          <span>Return to Victory App</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Developer & Testing Drawer (Toggleable at bottom-right) -->
+  <button type="button" class="dev-drawer-toggle" id="devDrawerToggle" title="Developer Simulation Controls">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    <span>Dev Mode</span>
+  </button>
+
+  <aside class="dev-modal" id="devModal" aria-label="Dev State Simulation">
+    <div class="dev-modal-title">
+      <span>Preview Simulation</span>
+      <button type="button" id="devCloseBtn" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Test UI responses without waiting for email tokens:</p>
+    <div class="dev-chip-group">
+      <button type="button" class="dev-chip" id="devSimulateVerified">Simulate Active User</button>
+      <button type="button" class="dev-chip" id="devSimulateExpired">Simulate Expired Link</button>
+      <button type="button" class="dev-chip" id="devSimulateSuccess">Simulate Success View</button>
+      <button type="button" class="dev-chip" id="devResetState">Reset Default</button>
+    </div>
+  </aside>
+
+  <!-- Application Logic -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
